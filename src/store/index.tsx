@@ -7,11 +7,17 @@ import { UserInfoModel } from '../util/DataModel';
 export interface StoreState {
   isLogin: boolean;
   user: UserInfoModel;
+  song: any;
+  songs: Array<any>;
+  isPlay: boolean;
 }
 
 const initialState: StoreState = {
   isLogin: false,
   user: { roomId: '' },
+  song: undefined,
+  songs: [],
+  isPlay: false,
 };
 
 const actions: Actions = {
@@ -26,6 +32,18 @@ const actions: Actions = {
   },
   user(state, payload) {
     state.user = { roomId: payload };
+    return state;
+  },
+  changeSong(state, payload) {
+    state.song = payload;
+    return state;
+  },
+  removeSong(state, payload) {
+    state.songs = state.songs.filter((item) => item.id !== payload);
+    return state;
+  },
+  setIsPlay(state, payload) {
+    state.isPlay = payload;
     return state;
   },
 };
