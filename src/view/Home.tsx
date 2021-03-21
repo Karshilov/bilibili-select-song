@@ -51,15 +51,18 @@ const Home = () => {
     });
     live.on('msg', (data) => {
       if (data.cmd === 'DANMU_MSG') {
-        setDanmuList((list) =>
-          list.concat({
+        setDanmuList((list) => {
+          const newList = list.concat({
             auther: data.info[2][1],
             content: data.info[1],
             id: Math.random(),
-          })
-        );
+          });
+          return newList.length > 50
+            ? newList.slice(newList.length - 50)
+            : newList;
+        });
         if (ref.current) {
-          if (!isBrowsing) {
+          if (isBrowsing === false) {
             ref.current.scrollTop =
               ref.current.scrollHeight - ref.current.clientHeight;
           }
@@ -115,7 +118,7 @@ const Home = () => {
           </div>
           <div className="line" />
           <div
-            className="m-4 overflow-y-auto appearance-none"
+            className="m-4 overflow-y-hidden appearance-none"
             style={{ height: 'calc(100% - 200px)' }}
             ref={ref}
           >
