@@ -5,7 +5,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { KeepLiveWS } from 'bilibili-live-ws';
 import { LogoutOutlined } from '@ant-design/icons';
-import { url } from 'inspector';
 import { Row, Col, Typography } from 'antd';
 import {
   Basement,
@@ -46,14 +45,11 @@ const Home = () => {
 
   useEffect(() => {
     const live = new KeepLiveWS(parseInt(user.roomId));
-    live.on('open', () => {
-      console.log('连接成功');
-    });
+    live.on('open', () => {});
     live.on('live', () => {
-      live.on('heartbeat', console.log);
+      live.on('heartbeat', () => {});
     });
     live.on('msg', (data) => {
-      console.log(data);
       if (data.cmd === 'DANMU_MSG') {
         setDanmuList((list) =>
           list.concat({
@@ -73,6 +69,7 @@ const Home = () => {
     return () => {
       live.close();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.roomId]);
 
   const statisticsColumns = [
@@ -122,7 +119,7 @@ const Home = () => {
             style={{ height: 'calc(100% - 200px)' }}
             ref={ref}
           >
-            {danmuList.map((item, index) => {
+            {danmuList.map((item) => {
               const isSelect = /点歌 .*/;
               if (
                 isSelect.test(item.content) === true &&
