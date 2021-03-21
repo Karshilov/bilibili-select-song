@@ -1,8 +1,7 @@
-/* eslint-disable react/no-array-index-key */
 /* eslint-disable radix */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-case-declarations */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { KeepLiveWS } from 'bilibili-live-ws';
 import { LogoutOutlined } from '@ant-design/icons';
@@ -26,6 +25,7 @@ const Home = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state: StoreState) => state);
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const live = new KeepLiveWS(parseInt(user.roomId));
@@ -38,11 +38,18 @@ const Home = () => {
     live.on('msg', (data) => {
       console.log(data);
       if (data.cmd === 'DANMU_MSG') {
-        setDanmuList(
-          danmuList.concat({ auther: data.info[2][1], content: data.info[1] })
+        setDanmuList((list) =>
+          list.concat({
+            auther: data.info[2][1],
+            content: data.info[1],
+            id: Math.random(),
+          })
         );
+        if (ref.current) {
+          ref.current.scrollTop =
+            ref.current.scrollHeight - ref.current.clientHeight;
+        }
       }
-      console.log(danmuList);
     });
     return () => {
       live.close();
@@ -91,7 +98,11 @@ const Home = () => {
             弹幕栏
           </div>
           <div className="line" />
-          <Typography className="m-4 overflow-y-auto appearance-none">
+          <div
+            className="m-4 overflow-y-auto appearance-none"
+            style={{ height: 'calc(100% - 200px)' }}
+            ref={ref}
+          >
             {danmuList.map((item, index) => {
               const isSelect = /点歌 .*/;
               if (
@@ -102,7 +113,7 @@ const Home = () => {
                   <SelectDanmu
                     auther={item.auther}
                     content={item.content}
-                    key={index}
+                    key={item.id}
                   />
                 );
               }
@@ -110,11 +121,11 @@ const Home = () => {
                 <CommonDanmu
                   auther={item.auther}
                   content={item.content}
-                  key={index}
+                  key={item.id}
                 />
               );
             })}
-          </Typography>
+          </div>
         </Layer>
         <Layer className="shadow-lg" style={{ left: '25%' }}>
           <div

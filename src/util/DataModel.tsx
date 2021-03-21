@@ -14,4 +14,5 @@ export interface ResultModel {
 export interface DanmuModel {
   auther: string;
   content: string;
+  id: number;
 }
