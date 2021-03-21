@@ -25,7 +25,24 @@ const Home = () => {
   const dispatch = useDispatch();
   const { user } = useSelector((state: StoreState) => state);
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
+  const [isBrowsing, setIsBrowsing] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const container = ref.current;
+    if (container) {
+      container.addEventListener('scroll', () => {
+        if (
+          container.scrollTop <
+          container.scrollHeight - container.clientHeight - 10
+        ) {
+          setIsBrowsing(true);
+        } else {
+          setIsBrowsing(false);
+        }
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const live = new KeepLiveWS(parseInt(user.roomId));
@@ -46,8 +63,10 @@ const Home = () => {
           })
         );
         if (ref.current) {
-          ref.current.scrollTop =
-            ref.current.scrollHeight - ref.current.clientHeight;
+          if (!isBrowsing) {
+            ref.current.scrollTop =
+              ref.current.scrollHeight - ref.current.clientHeight;
+          }
         }
       }
     });
