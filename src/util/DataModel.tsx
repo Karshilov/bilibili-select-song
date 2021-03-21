@@ -10,3 +10,8 @@ export interface ResultModel {
   seq: number;
   body: any;
 }
+
+export interface DanmuModel {
+  auther: string;
+  content: string;
+}

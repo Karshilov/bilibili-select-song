@@ -1,0 +1,23 @@
+@font-face {
+  font-family: 'Quicksand';
+  src: url('../../assets/Quicksand-Light.ttf');
+}
+
+.line {
+  animation: line-extract 1s;
+  height: 2px;
+  font-size: 24px;
+  width: 90%;
+  background: #fff;
+  margin: 0 auto;
+  margin-top: 5;
+}
+
+@keyframes line-extract {
+  from {
+    width: 0;
+  }
+  to {
+    width: 90%;
+  }
+}
