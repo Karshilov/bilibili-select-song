@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { KeepLiveWS } from 'bilibili-live-ws';
 import { LogoutOutlined } from '@ant-design/icons';
-import { Row, Col, Typography } from 'antd';
+import { Row, Col, Typography, message } from 'antd';
 import {
   Basement,
   Layer,
@@ -16,7 +16,11 @@ import { StoreState } from '../store';
 import leftBg from '../../assets/left-bg.jpg';
 import { DanmuModel } from '../util/DataModel';
 import { CommonDanmu, SelectDanmu } from '../component/DanmuElement';
+import { useApi } from '../util/api';
 import './statictis-font.global.css';
+import SongApi from '../util/songApi';
+
+const { songUrl } = SongApi();
 
 const { Text, Paragraph } = Typography;
 
@@ -26,6 +30,21 @@ const Home = () => {
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
   const [isBrowsing, setIsBrowsing] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const api = useApi();
+
+  const addSongIdBySearch = async (keywords: string) => {
+    const res = await api.get('/cloudsearch', {
+      params: { keywords, limit: 10 },
+    });
+    if (res.status !== 200) {
+      message.error(res.statusText);
+      return;
+    }
+    const firstMatch = await songUrl(res.data.result.songs[0].id)
+      .then((result: any) => result.data.data[0])
+      .catch((err: any) => console.log(err));
+    dispatch({ type: 'addSong', firstMatch });
+  };
 
   useEffect(() => {
     const container = ref.current;
@@ -61,6 +80,10 @@ const Home = () => {
             ? newList.slice(newList.length - 50)
             : newList;
         });
+        const isSelect = /点歌 .*/;
+        if (isSelect.test(data.info[1]) === true && data.info[1].length > 3) {
+          addSongIdBySearch(data.info[1].slice(3));
+        }
         if (ref.current) {
           if (isBrowsing === false) {
             ref.current.scrollTop =

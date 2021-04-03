@@ -4,15 +4,14 @@ import SongActions from '../util/onAction';
 
 const { onChangeSong, onRemoveSong, onPauseOrPlay } = SongActions();
 
-export const ListItem = (props: {
+export const SelectItem = (props: {
   isPlay: boolean;
   title: string;
   singer: string;
-  order: string;
   url: string;
   id: string;
 }) => {
-  const { isPlay, title, singer, order, url, id } = props;
+  const { isPlay, title, singer, url, id } = props;
   return (
     <Container
       onClick={async () => {
@@ -29,20 +28,18 @@ export const ListItem = (props: {
       <div className="m-2">-</div>
       <div className="text-baseRed font-normal text-sm">{singer}</div>
       <div style={{ flexGrow: 1 }} />
-      <div className="text-baseRed font-normal text-sm">{`Order by ${order}`}</div>
     </Container>
   );
 };
 
-export const SelectItem = (props: {
+export const ListItem = (props: {
   isPlay: boolean;
   title: string;
   singer: string;
-  order: string;
   url: string;
   id: string;
 }) => {
-  const { isPlay, title, singer, order, url, id } = props;
+  const { isPlay, title, singer, url, id } = props;
   return (
     <Container
       onClick={async () => {
@@ -58,7 +55,6 @@ export const SelectItem = (props: {
       <div className="m-2">-</div>
       <div className="text-black font-normal text-sm">{singer}</div>
       <div style={{ flexGrow: 1 }} />
-      <div className="text-black font-normal text-sm">{`Order by ${order}`}</div>
     </Container>
   );
 };

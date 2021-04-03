@@ -46,6 +46,10 @@ const actions: Actions = {
     state.isPlay = payload;
     return state;
   },
+  addSong(state, payload) {
+    state.songs = state.songs.concat(payload);
+    return state;
+  },
 };
 
 const reducer = (state: StoreState = initialState, action: Action) => {
