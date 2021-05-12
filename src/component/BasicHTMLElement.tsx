@@ -97,7 +97,7 @@ export const Container = (props: {
   return (
     <Card
       onClick={() => {
-        props.onClick;
+        if (props.onClick !== undefined) props.onClick();
       }}
       style={{
         borderRadius: '10px',

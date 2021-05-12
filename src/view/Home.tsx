@@ -16,6 +16,7 @@ import { StoreState } from '../store';
 import leftBg from '../../assets/left-bg.jpg';
 import { DanmuModel } from '../util/DataModel';
 import { CommonDanmu, SelectDanmu } from '../component/DanmuElement';
+import { SelectItem, ListItem } from '../component/ListElement';
 import { useApi } from '../util/api';
 import './statictis-font.global.css';
 import SongApi from '../util/songApi';
@@ -29,6 +30,8 @@ const Home = () => {
   const { user } = useSelector((state: StoreState) => state);
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
   const [isBrowsing, setIsBrowsing] = useState(false);
+  const [duration, setDuration] = useState(0);
+  const { songs, song, isPlay } = useSelector((state: StoreState) => state);
   const ref = useRef<HTMLDivElement>(null);
   const api = useApi();
 
@@ -40,10 +43,26 @@ const Home = () => {
       message.error(res.statusText);
       return;
     }
+    const firstS = res.data.result.songs[0];
     const firstMatch = await songUrl(res.data.result.songs[0].id)
       .then((result: any) => result.data.data[0])
       .catch((err: any) => console.log(err));
-    dispatch({ type: 'addSong', firstMatch });
+    console.log(firstMatch);
+    const allSinger = () => {
+      let s = '';
+      firstS.ar.forEach((item: any) => {
+        s += item.tns[0];
+      });
+      return s;
+    };
+    dispatch({
+      type: 'addSong',
+      payload: {
+        id: firstMatch.id,
+        singer: allSinger(),
+        title: firstS.name,
+      },
+    });
   };
 
   useEffect(() => {
@@ -60,6 +79,12 @@ const Home = () => {
         }
       });
     }
+  }, []);
+
+  useEffect(() => {
+    console.log('added');
+    addSongIdBySearch('One Last Kiss');
+    console.log(songs);
   }, []);
 
   useEffect(() => {
@@ -80,7 +105,7 @@ const Home = () => {
             ? newList.slice(newList.length - 50)
             : newList;
         });
-        const isSelect = /点歌 .*/;
+        const isSelect = /点歌\S.*/;
         if (isSelect.test(data.info[1]) === true && data.info[1].length > 3) {
           addSongIdBySearch(data.info[1].slice(3));
         }
@@ -228,6 +253,28 @@ const Home = () => {
               })}
             </Row>
           </Container>
+          <div className="m-3 p-2">
+            {songs.map((item) => {
+              console.log(item, song);
+              return item.id === song.id ? (
+                <SelectItem
+                  isPlay={isPlay}
+                  title={item.title}
+                  id={item.id}
+                  key={Math.random()}
+                  singer={item.singer}
+                />
+              ) : (
+                <ListItem
+                  isPlay={isPlay}
+                  title={item.title}
+                  id={item.id}
+                  key={Math.random()}
+                  singer={item.singer}
+                />
+              );
+            })}
+          </div>
         </Layer>
       </Board>
     </Basement>

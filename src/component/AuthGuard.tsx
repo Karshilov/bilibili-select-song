@@ -11,10 +11,15 @@ interface Props {
 }
 
 const AuthGuard: React.FC<Props> = ({ children }: Props) => {
-  // 获取登录状态
-  const { isLogin } = useSelector((state: StoreState) => state);
   const dispatch = useDispatch();
   const history = useHistory();
+
+  useEffect(() => {
+    dispatch({ type: 'clearAll' });
+  }, []);
+
+  // 获取登录状态
+  const { isLogin } = useSelector((state: StoreState) => state);
 
   return <>{isLogin ? children : <Login />}</>;
 };

@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { stat } from 'fs';
 import { createStore } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
@@ -48,6 +49,12 @@ const actions: Actions = {
   },
   addSong(state, payload) {
     state.songs = state.songs.concat(payload);
+    // eslint-disable-next-line prefer-destructuring
+    if (state.song === undefined) state.song = state.songs[0];
+    return state;
+  },
+  clearAll(state) {
+    state.song = initialState;
     return state;
   },
 };
