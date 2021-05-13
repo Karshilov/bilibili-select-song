@@ -2,7 +2,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable no-case-declarations */
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, connect } from 'react-redux';
 import { KeepLiveWS } from 'bilibili-live-ws';
 import { LogoutOutlined } from '@ant-design/icons';
 import { Row, Col, Typography, message } from 'antd';
@@ -19,13 +19,17 @@ import { CommonDanmu, SelectDanmu } from '../component/DanmuElement';
 import { SelectItem, ListItem } from '../component/ListElement';
 import { useApi } from '../util/api';
 import './statictis-font.global.css';
+import { mapStateToProps } from '../store/dispatchBind';
 import SongApi from '../util/songApi';
 
 const { songUrl } = SongApi();
 
 const { Text, Paragraph } = Typography;
 
-const Home = () => {
+const Home = connect(
+  mapStateToProps,
+  null
+)(() => {
   const dispatch = useDispatch();
   const { user } = useSelector((state: StoreState) => state);
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
@@ -279,6 +283,6 @@ const Home = () => {
       </Board>
     </Basement>
   );
-};
+});
 
 export default Home;

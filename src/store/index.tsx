@@ -11,6 +11,7 @@ export interface StoreState {
   song: any;
   songs: Array<any>;
   isPlay: boolean;
+  neteaseUser: any;
 }
 
 const initialState: StoreState = {
@@ -19,6 +20,7 @@ const initialState: StoreState = {
   song: undefined,
   songs: [],
   isPlay: false,
+  neteaseUser: undefined,
 };
 
 const actions: Actions = {
@@ -55,6 +57,14 @@ const actions: Actions = {
   },
   clearAll(state) {
     state.song = initialState;
+    return state;
+  },
+  neteaseLogin(state, payload) {
+    state.neteaseUser = payload;
+    return state;
+  },
+  neteaseLogout(state) {
+    state.neteaseUser = undefined;
     return state;
   },
 };
