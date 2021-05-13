@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector, connect } from 'react-redux';
-import { Pagination } from 'antd';
 import { SelectItem, ListItem } from '../component/ListElement';
 import { StoreState } from '../store';
 import { mapStateToProps } from '../store/dispatchBind';
@@ -13,8 +12,22 @@ const SongList = connect(
     (state: StoreState) => state
   );
   const [pageAndPageSize, setPageAndPageSize] = useState<Array<number>>([1, 4]);
+  const [pageNums, setPageNums] = useState<Array<number>>([]);
+
+  useEffect(() => {
+    let tot = songs.length;
+    let i = 1;
+    const newNums: Array<number> = [];
+    while (tot > 0) {
+      newNums.push(i);
+      tot -= pageAndPageSize[1];
+      i += 1;
+    }
+    setPageNums([...newNums]);
+  }, [pageAndPageSize, songs]);
+
   return (
-    <div className="m-3 p-2">
+    <div className="p-2" style={{ marginLeft: '10%', marginRight: '10%' }}>
       {songs
         .slice(
           (pageAndPageSize[0] - 1) * pageAndPageSize[1],
@@ -39,15 +52,32 @@ const SongList = connect(
             />
           );
         })}
-      <Pagination
-        responsive
-        defaultCurrent={1}
-        hideOnSinglePage
-        onChange={(pg, pgSize) => {
-          console.log(pg, pgSize);
-          setPageAndPageSize([pg, pgSize ?? 4]);
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row',
         }}
-      />
+      >
+        {pageNums.map((i: number) => {
+          return (
+            <button
+              key={i}
+              style={{ fontSize: 17, margin: 5 }}
+              type="button"
+              className="bg-transparent hover:bg-baseRed font-semibold text-baseRed hover:text-white px-2 py-1 hover:border-transparent"
+              onClick={() => {
+                setPageAndPageSize([i, pageAndPageSize[1]]);
+              }}
+            >
+              {i}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 });

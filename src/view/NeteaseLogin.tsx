@@ -37,16 +37,30 @@ const NeteaseLogin = connect(
       return;
     }
     const refresh = await loginRefresh();
-    if (res.status !== 200 && res.status !== 204) {
+    if (refresh.status !== 200 && refresh.status !== 204) {
       message.error(res.statusText);
       return;
     }
     const info = await userAccount();
+    if (info.status !== 200 && info.status !== 204) {
+      message.error(res.statusText);
+      return;
+    }
     console.log(res, refresh, info.data);
     props.onSetUser(info.data);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    const res = await userLogout();
+    if (res.status !== 200 && res.status !== 204) {
+      message.error(res.statusText);
+      return;
+    }
+    const refresh = await loginRefresh();
+    if (refresh.status !== 200 && refresh.status !== 204) {
+      message.error(res.statusText);
+      return;
+    }
     props.onSetUser(false);
   };
 
@@ -115,15 +129,22 @@ const NeteaseLogin = connect(
         marginTop: 20,
       }}
     >
+      <img
+        src={neteaseUser.profile.avatarUrl}
+        alt=""
+        width={75}
+        className="m-4"
+        style={{ borderRadius: '50%' }}
+      />
       <div
         style={{
           ...bothMiddle,
           flexDirection: 'row',
         }}
       >
-        <div className="text-black font-mono text-lg m-3">当前帐号：</div>
-        <div style={{ fontFamily: 'Quicksand', fontSize: 16, fontWeight: 500 }}>
-          18010653819
+        <div className="text-black font-mono text-lg m-3">当前帐号: </div>
+        <div style={{ fontFamily: 'Quicksand', fontSize: 17, fontWeight: 600 }}>
+          {neteaseUser.profile.nickname}
         </div>
       </div>
       <button
