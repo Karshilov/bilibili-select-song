@@ -5,7 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { KeepLiveWS } from 'bilibili-live-ws';
 import { LogoutOutlined, ClearOutlined, UserOutlined } from '@ant-design/icons';
-import { Row, Col, Typography, message, Pagination } from 'antd';
+import { message } from 'antd';
 import {
   Basement,
   Layer,
@@ -31,7 +31,7 @@ const Home = connect(
   null
 )(() => {
   const dispatch = useDispatch();
-  const { user } = useSelector((state: StoreState) => state);
+  const { user, songs } = useSelector((state: StoreState) => state);
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
   const [isBrowsing, setIsBrowsing] = useState(false);
   const [showNetease, setShowNetease] = useState(false);
@@ -50,7 +50,10 @@ const Home = connect(
     const firstMatch = await songUrl(res.data.result.songs[0].id)
       .then((result: any) => result.data.data[0])
       .catch((err: any) => console.log(err));
-    console.log(firstMatch);
+    if (songs.find((item) => item.id === firstMatch.id)) {
+      message.error('列表中已存在~');
+      return;
+    }
     const allSinger = () => {
       let s = '';
       firstS.ar.forEach((item: any) => {
@@ -64,6 +67,7 @@ const Home = connect(
         id: firstMatch.id,
         singer: allSinger(),
         title: firstS.name,
+        spendTime: firstS.dt,
       },
     });
   };

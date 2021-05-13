@@ -8,9 +8,7 @@ const SongList = connect(
   mapStateToProps,
   null
 )(() => {
-  const { songs, song, isPlay, played } = useSelector(
-    (state: StoreState) => state
-  );
+  const { songs, song, isPlay } = useSelector((state: StoreState) => state);
   const [pageAndPageSize, setPageAndPageSize] = useState<Array<number>>([1, 4]);
   const [pageNums, setPageNums] = useState<Array<number>>([]);
 
@@ -39,6 +37,7 @@ const SongList = connect(
               isPlay={isPlay}
               title={item.title}
               id={item.id}
+              spendTime={item.spendTime}
               key={Math.random()}
               singer={item.singer}
             />
@@ -47,6 +46,7 @@ const SongList = connect(
               isPlay={isPlay}
               title={item.title}
               id={item.id}
+              spendTime={item.spendTime}
               key={Math.random()}
               singer={item.singer}
             />
@@ -62,21 +62,23 @@ const SongList = connect(
           flexDirection: 'row',
         }}
       >
-        {pageNums.map((i: number) => {
-          return (
-            <button
-              key={i}
-              style={{ fontSize: 17, margin: 5 }}
-              type="button"
-              className="bg-transparent hover:bg-baseRed font-semibold text-baseRed hover:text-white px-2 py-1 hover:border-transparent"
-              onClick={() => {
-                setPageAndPageSize([i, pageAndPageSize[1]]);
-              }}
-            >
-              {i}
-            </button>
-          );
-        })}
+        {pageNums.length <= 1
+          ? null
+          : pageNums.map((i: number) => {
+              return (
+                <button
+                  key={i}
+                  style={{ fontSize: 17, margin: 5 }}
+                  type="button"
+                  className="bg-transparent hover:bg-baseRed font-semibold text-baseRed hover:text-white px-2 py-1 hover:border-transparent"
+                  onClick={() => {
+                    setPageAndPageSize([i, pageAndPageSize[1]]);
+                  }}
+                >
+                  {i}
+                </button>
+              );
+            })}
       </div>
     </div>
   );

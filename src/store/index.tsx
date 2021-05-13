@@ -12,7 +12,7 @@ export interface StoreState {
   songs: Array<any>;
   isPlay: boolean;
   neteaseUser: any;
-  played: number;
+  played: Array<any>;
 }
 
 const initialState: StoreState = {
@@ -20,7 +20,7 @@ const initialState: StoreState = {
   user: { roomId: '' },
   song: undefined,
   songs: [],
-  played: 0,
+  played: [],
   isPlay: false,
   neteaseUser: undefined,
 };
@@ -45,11 +45,11 @@ const actions: Actions = {
   },
   removeSong(state, payload) {
     state.songs = state.songs.filter((item) => item.id !== payload);
+    state.played = state.played.concat(payload);
     return state;
   },
   setIsPlay(state, payload) {
     state.isPlay = payload;
-    state.played += 1;
     return state;
   },
   addSong(state, payload) {
@@ -62,7 +62,7 @@ const actions: Actions = {
     state.song = initialState.song;
     state.songs = initialState.songs;
     state.isPlay = false;
-    state.played = 0;
+    state.played = [];
     return state;
   },
   neteaseLogin(state, payload) {

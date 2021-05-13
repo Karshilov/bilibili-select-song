@@ -10,11 +10,15 @@ export function mapDispatchToProps(dispatch: any) {
       .catch((err) => console.log(err));
     // 歌曲权限不足时，URL为空
     if (!song || !song.url) {
-      message.warning('此歌曲无权播放╮(￣▽￣"")╭');
+      message.warning('歌曲权限不足');
       return false;
     }
     dispatch({ type: 'changeSong', payload: song });
     return true;
+  };
+
+  const onRemoveSong = async (id: string) => {
+    dispatch({ type: 'removeSong', payload: id });
   };
 
   const onPauseOrPlay = (status: any) => {
@@ -33,6 +37,8 @@ export function mapDispatchToProps(dispatch: any) {
     onPauseOrPlay,
     // 用户登录或注销
     onSetUser,
+    // 移除歌曲
+    onRemoveSong,
   };
 }
 

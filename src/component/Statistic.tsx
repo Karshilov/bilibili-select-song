@@ -20,11 +20,11 @@ const SongStatistic = connect(
     },
     {
       key: '已播放数',
-      num: played,
+      num: played.length,
     },
     {
       key: '未播放数',
-      num: songs.length - played,
+      num: songs.length - played.length >= 0 ? songs.length - played.length : 0,
     },
   ];
 
