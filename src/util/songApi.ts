@@ -16,8 +16,7 @@ const SongApi = () => {
 
   const checkLogin = () => api.get('/login/status');
 
-  const userDetail = (uid: string) =>
-    api.get('/user/detail', { params: { uid } });
+  const userAccount = () => api.get('/user/account');
 
   const loginRefresh = () => api.post('/login/refresh');
 
@@ -28,7 +27,7 @@ const SongApi = () => {
     userLogin,
     userLogout,
     checkLogin,
-    userDetail,
+    userAccount,
     loginRefresh,
   };
 };

@@ -4,8 +4,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { KeepLiveWS } from 'bilibili-live-ws';
-import { LogoutOutlined } from '@ant-design/icons';
-import { Row, Col, Typography, message } from 'antd';
+import { LogoutOutlined, ClearOutlined, UserOutlined } from '@ant-design/icons';
+import { Row, Col, Typography, message, Pagination } from 'antd';
 import {
   Basement,
   Layer,
@@ -16,15 +16,15 @@ import { StoreState } from '../store';
 import leftBg from '../../assets/left-bg.jpg';
 import { DanmuModel } from '../util/DataModel';
 import { CommonDanmu, SelectDanmu } from '../component/DanmuElement';
-import { SelectItem, ListItem } from '../component/ListElement';
 import { useApi } from '../util/api';
 import './statictis-font.global.css';
 import { mapStateToProps } from '../store/dispatchBind';
 import SongApi from '../util/songApi';
+import SongList from './SongList';
+import SongStatistic from '../component/Statistic';
+import NeteaseLogin from './NeteaseLogin';
 
 const { songUrl } = SongApi();
-
-const { Text, Paragraph } = Typography;
 
 const Home = connect(
   mapStateToProps,
@@ -34,8 +34,7 @@ const Home = connect(
   const { user } = useSelector((state: StoreState) => state);
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
   const [isBrowsing, setIsBrowsing] = useState(false);
-  const [duration, setDuration] = useState(0);
-  const { songs, song, isPlay } = useSelector((state: StoreState) => state);
+  const [showNetease, setShowNetease] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const api = useApi();
 
@@ -86,9 +85,7 @@ const Home = connect(
   }, []);
 
   useEffect(() => {
-    console.log('added');
     addSongIdBySearch('One Last Kiss');
-    console.log(songs);
   }, []);
 
   useEffect(() => {
@@ -126,21 +123,6 @@ const Home = connect(
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user.roomId]);
-
-  const statisticsColumns = [
-    {
-      key: '总点歌数',
-      num: 0,
-    },
-    {
-      key: '已播放数',
-      num: 0,
-    },
-    {
-      key: '未播放数',
-      num: 0,
-    },
-  ];
 
   return (
     <Basement>
@@ -220,65 +202,50 @@ const Home = connect(
               }}
               className="transition duration-500 ease-in-out transform hover:scale-110"
             />
+            <ClearOutlined
+              onClick={() => {
+                dispatch({ type: 'clearAll' });
+              }}
+              style={{
+                color: '#D0104C',
+                margin: 10,
+                fontSize: 24,
+                marginRight: 20,
+              }}
+              className="transition duration-500 ease-in-out transform hover:scale-110"
+            />
+            <UserOutlined
+              onClick={() => {
+                setShowNetease(!showNetease);
+              }}
+              style={{
+                color: '#D0104C',
+                margin: 10,
+                fontSize: 24,
+                marginRight: 20,
+              }}
+              className="transition duration-500 ease-in-out transform hover:scale-110"
+            />
           </div>
-          <Container
-            style={{
-              backgroundImage:
-                'linear-gradient(to bottom right, #D0104C, #f78ba2)',
-              marginLeft: '7%',
-              marginRight: '7%',
-              marginTop: 20,
-            }}
-            hoverable={false}
-          >
-            <Row>
-              {statisticsColumns.map((item) => {
-                return (
-                  <Col
-                    span={Math.floor(24 / statisticsColumns.length)}
-                    key={item.key}
-                  >
-                    <Text style={{ color: 'white', opacity: 0.8 }}>
-                      {item.key}
-                    </Text>
-                    <Paragraph>
-                      <Text
-                        style={{
-                          fontFamily: 'Quicksand',
-                          fontSize: 32,
-                          color: 'white',
-                        }}
-                      >
-                        {item.num}
-                      </Text>
-                    </Paragraph>
-                  </Col>
-                );
-              })}
-            </Row>
-          </Container>
-          <div className="m-3 p-2">
-            {songs.map((item) => {
-              console.log(item, song);
-              return item.id === song.id ? (
-                <SelectItem
-                  isPlay={isPlay}
-                  title={item.title}
-                  id={item.id}
-                  key={Math.random()}
-                  singer={item.singer}
-                />
-              ) : (
-                <ListItem
-                  isPlay={isPlay}
-                  title={item.title}
-                  id={item.id}
-                  key={Math.random()}
-                  singer={item.singer}
-                />
-              );
-            })}
-          </div>
+          {showNetease ? (
+            <NeteaseLogin />
+          ) : (
+            <Layer style={{ top: 50 }}>
+              <Container
+                style={{
+                  backgroundImage:
+                    'linear-gradient(to bottom right, #D0104C, #f78ba2)',
+                  marginLeft: '7%',
+                  marginRight: '7%',
+                  marginTop: 20,
+                }}
+                hoverable={false}
+              >
+                <SongStatistic />
+              </Container>
+              <SongList />
+            </Layer>
+          )}
         </Layer>
       </Board>
     </Basement>

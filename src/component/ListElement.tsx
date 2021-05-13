@@ -21,7 +21,6 @@ const SelectItem = connect(
     onPauseOrPlay: Function;
   }) => {
     const { isPlay, title, singer, id } = props;
-    const dispatch = useDispatch();
 
     return (
       <Container
@@ -32,7 +31,7 @@ const SelectItem = connect(
         style={{
           display: 'flex',
           flexDirection: 'row',
-          backgroundImage: 'linear-gradient(to top, #ffe6e9, #ffb8c5)',
+          backgroundImage: 'linear-gradient(to bottom, #ffe6e9, #ffb8c5)',
           margin: 25,
           marginLeft: '3rem',
           marginRight: '3rem',
@@ -70,7 +69,6 @@ const ListItem = connect(
     onPauseOrPlay: Function;
   }) => {
     const { isPlay, title, singer, id } = props;
-    const dispatch = useDispatch();
 
     return (
       <Container

@@ -106,6 +106,7 @@ export const Container = (props: {
       bodyStyle={{ padding: '15px 25px', ...(props.bodyStyle ?? {}) }}
       hoverable={props.hoverable ?? true}
       className="shadow-xl"
+      bordered={false}
     >
       {props.children}
     </Card>
