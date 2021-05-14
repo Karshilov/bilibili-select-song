@@ -33,7 +33,7 @@ const Home = connect(
 )((props: any) => {
   const dispatch = useDispatch();
   const history = useHistory();
-  const { user, songs } = useSelector((state: StoreState) => state);
+  const { user } = useSelector((state: StoreState) => state);
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
   const [isBrowsing, setIsBrowsing] = useState(false);
   const [showNetease, setShowNetease] = useState(false);
@@ -52,18 +52,19 @@ const Home = connect(
     const firstMatch = await songUrl(res.data.result.songs[0].id)
       .then((result: any) => result.data.data[0])
       .catch((err: any) => console.log(err));
-    if (songs.find((item) => item.id === firstMatch.id)) {
+    if (props.songs.find((item: any) => item.id === firstMatch.id)) {
       message.error('列表中已存在~');
       return;
     }
     const allSinger = () => {
       let s = '';
       firstS.ar.forEach((item: any) => {
-        s += item.tns[0];
+        s += item.name;
+        s += '/';
       });
-      return s;
+      return s.slice(0, s.length - 1);
     };
-    if (songs.length === 0) await props.onChangeSong(firstMatch.id);
+    if (props.songs.length === 0) await props.onChangeSong(firstMatch.id);
     dispatch({
       type: 'addSong',
       payload: {
@@ -92,14 +93,10 @@ const Home = connect(
   }, []);
 
   useEffect(() => {
-    addSongIdBySearch('One Last Kiss');
-  }, []);
-
-  useEffect(() => {
     if (Number.isNaN(parseInt(user.roomId))) {
       message.error('房间号应为数字');
       dispatch({ type: 'logout' });
-      history.go(-1);
+      return () => {};
     }
     const live = new KeepLiveWS(parseInt(user.roomId));
     live.on('open', () => {});
@@ -118,7 +115,7 @@ const Home = connect(
             ? newList.slice(newList.length - 50)
             : newList;
         });
-        const isSelect = /点歌\S.*/;
+        const isSelect = /点歌\s.*/;
         if (isSelect.test(data.info[1]) === true && data.info[1].length > 3) {
           addSongIdBySearch(data.info[1].slice(3));
         }
@@ -169,7 +166,7 @@ const Home = connect(
             ref={ref}
           >
             {danmuList.map((item) => {
-              const isSelect = /点歌 .*/;
+              const isSelect = /点歌\s.*/;
               if (
                 isSelect.test(item.content) === true &&
                 item.content.length > 3

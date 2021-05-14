@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector, connect } from 'react-redux';
+import { connect } from 'react-redux';
 import { SelectItem, ListItem } from '../component/ListElement';
-import { StoreState } from '../store';
 import { mapStateToProps, mapDispatchToProps } from '../store/dispatchBind';
 
 const SongList = connect(
   mapStateToProps,
   mapDispatchToProps
 )((props: any) => {
-  const { songs, song, isPlay } = useSelector((state: StoreState) => state);
+  const { songs, song } = props;
   const [pageAndPageSize, setPageAndPageSize] = useState<Array<number>>([1, 4]);
   const [pageNums, setPageNums] = useState<Array<number>>([]);
 
@@ -32,13 +31,14 @@ const SongList = connect(
               (pageAndPageSize[0] - 1) * pageAndPageSize[1],
               Math.min(pageAndPageSize[0] * pageAndPageSize[1], songs.length)
             )
-            .map((item) => {
+            .map((item: any) => {
+              console.log(song.id === item.id, song.id, item.id);
               return item.id === song.id ? (
                 <SelectItem
                   title={item.title}
                   id={item.id}
                   spendTime={item.spendTime}
-                  key={Math.random()}
+                  key={item.id}
                   singer={item.singer}
                 />
               ) : (
@@ -46,7 +46,7 @@ const SongList = connect(
                   title={item.title}
                   id={item.id}
                   spendTime={item.spendTime}
-                  key={Math.random()}
+                  key={item.id}
                   singer={item.singer}
                 />
               );

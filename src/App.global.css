@@ -20,3 +20,12 @@ a:hover {
   align-items: center;
   margin: 20px 0;
 }
+
+@keyframes slider {
+  from {
+    left: 0%;
+  }
+  to {
+    left: 100%;
+  }
+}

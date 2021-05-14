@@ -50,6 +50,9 @@ const actions: Actions = {
   },
   removeSong(state, payload) {
     state.songs = state.songs.filter((item) => item.id !== payload);
+    return state;
+  },
+  addPlayedSong(state, payload) {
     state.played = state.played.concat(payload);
     return state;
   },

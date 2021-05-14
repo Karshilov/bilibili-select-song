@@ -4,17 +4,15 @@
 /* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable @typescript-eslint/ban-types */
 import React, { useEffect, useRef, useState } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import {
   DeleteOutlined,
   PauseOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
 import { message } from 'antd';
-import { configConsumerProps } from 'antd/lib/config-provider';
 import { Container, Layer } from './BasicHTMLElement';
 import { mapDispatchToProps, mapStateToProps } from '../store/dispatchBind';
-import { StoreState } from '../store';
 
 const handleTime = (milliseconds: number) => {
   const time = milliseconds / 1000;
@@ -39,10 +37,11 @@ const SelectItem = connect(
     onChangeSong: Function;
     onPauseOrPlay: Function;
     onRemoveSong: Function;
+    onPlayedSong: Function;
     songs: Array<any>;
     song: any;
   }) => {
-    const { title, singer, id, spendTime } = props;
+    const { title, singer, id, spendTime, onPauseOrPlay, song, isPlay } = props;
     const iconStyle: React.CSSProperties = {
       color: '#D0104C',
       margin: 10,
@@ -53,6 +52,7 @@ const SelectItem = connect(
     const ref = useRef<HTMLAudioElement>(null);
     const [currentTime, setCurrentTime] = useState(0);
     const [duration, setDuration] = useState(0);
+    const [status, setStatus] = useState(true);
 
     const onStepSong = (
       currentSongId: number | undefined = undefined,
@@ -64,9 +64,14 @@ const SelectItem = connect(
           (item) => item.id === props.song.id
         );
       }
+      props.onPlayedSong(id);
       const step = next ? 1 : -1;
       const nextSong = props.songs[currentSongId + step];
-      if (!nextSong) return message.info('歌单已清空');
+      if (!nextSong) {
+        message.info('歌单已清空');
+        props.onRemoveSong(id);
+        return;
+      }
       props
         .onChangeSong(nextSong.id)
         .then((res: any) => {
@@ -84,16 +89,10 @@ const SelectItem = connect(
         audio.onended = () => {
           onStepSong();
         };
-        audio.onpause = () => {
-          props.onPauseOrPlay(false);
-        };
         audio.onplay = () => {
           setDuration(audio.duration);
-          console.log(audio.duration, audio.currentTime, audio.src);
-          props.onPauseOrPlay(true);
         };
         audio.ontimeupdate = () => {
-          console.log(currentTime);
           setCurrentTime(audio.currentTime);
         };
       }
@@ -111,6 +110,26 @@ const SelectItem = connect(
         }}
         bodyStyle={{ width: '100%', position: 'relative', height: '100%' }}
       >
+        <Layer>
+          <div style={{ width: '100%' }} id="met" />
+          <div
+            style={{
+              height: '100%',
+              width: 2,
+              background: '#FFF',
+              boxShadow: '0px 0px 4px #F8F2F8',
+              position: 'absolute',
+              left: `${(() => {
+                const divMet = document.getElementById('met');
+                if (divMet !== undefined && divMet !== null) {
+                  return (currentTime / duration) * divMet.clientWidth;
+                }
+                return 0;
+              })()}px`,
+            }}
+          />
+        </Layer>
+        <audio src={song.url} ref={ref} autoPlay />
         <div
           style={{
             display: 'flex',
@@ -120,17 +139,17 @@ const SelectItem = connect(
             alignItems: 'baseline',
           }}
         >
-          <audio src={props.song.url} ref={ref} autoPlay />
           <div className="text-baseRed font-medium text-lg">{title}</div>
           <div className="m-2 text-baseRed">-</div>
           <div className="text-baseRed font-normal text-sm">{singer}</div>
           <div className="m-2 text-baseRed">{handleTime(spendTime)}</div>
           <div style={{ flexGrow: 1 }} />
-          {props.isPlay ? (
+          {status ? (
             <PauseOutlined
               onClick={() => {
                 if (ref.current) {
                   ref.current.pause();
+                  setStatus(false);
                 }
               }}
               style={iconStyle}
@@ -141,13 +160,9 @@ const SelectItem = connect(
               onClick={async () => {
                 if (ref.current) {
                   const audio = ref.current;
-                  console.log(props.song);
-                  const res = audio.play();
-                  if (res) {
-                    res.catch((err) => {
-                      audio.play();
-                    });
-                  }
+                  console.log(song);
+                  const res = await audio.play();
+                  setStatus(true);
                 }
               }}
               style={iconStyle}
@@ -156,29 +171,19 @@ const SelectItem = connect(
           )}
           <DeleteOutlined
             onClick={() => {
-              props.onRemoveSong(id);
+              const currentSongId = props.songs.findIndex(
+                (item) => item.id === props.song.id
+              );
+              const nextSong = props.songs[currentSongId + 1];
+              props.onRemoveSong(
+                id,
+                nextSong === undefined ? undefined : nextSong.id
+              );
             }}
             style={iconStyle}
             className="transition duration-500 ease-in-out transform hover:scale-110"
           />
         </div>
-        <Layer
-          style={{
-            left: `${parseInt(
-              ((currentTime * 100) / duration).toString(),
-              10
-            )}%`,
-          }}
-        >
-          <div
-            style={{
-              height: '100%',
-              width: 2,
-              background: '#F8F2F8',
-              boxShadow: '6px 0px 4px #FFF',
-            }}
-          />
-        </Layer>
       </Container>
     );
   }
@@ -206,7 +211,6 @@ const ListItem = connect(
       <Container
         onClick={async () => {
           await props.onChangeSong(id);
-          props.onPauseOrPlay(true);
         }}
         style={{
           display: 'flex',
@@ -215,6 +219,7 @@ const ListItem = connect(
           marginLeft: '1rem',
           marginRight: '1rem',
         }}
+        bodyStyle={{ width: '100%' }}
       >
         <div
           style={{
@@ -231,11 +236,12 @@ const ListItem = connect(
           <div className="m-2">{handleTime(spendTime)}</div>
           <div style={{ flexGrow: 1 }} />
           <DeleteOutlined
-            onClick={() => {
-              props.onRemoveSong(id);
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              props.onRemoveSong(id, undefined);
             }}
             style={{
-              color: '#D0104C',
+              color: '#000',
               margin: 10,
               fontSize: 24,
               marginRight: 20,

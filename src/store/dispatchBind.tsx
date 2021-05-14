@@ -17,8 +17,15 @@ export function mapDispatchToProps(dispatch: any) {
     return true;
   };
 
-  const onRemoveSong = async (id: string) => {
+  const onRemoveSong = async (id: string, nextId: string | undefined) => {
+    if (nextId !== undefined) {
+      onChangeSong(nextId);
+    }
     dispatch({ type: 'removeSong', payload: id });
+  };
+
+  const onPlayedSong = (id: string) => {
+    dispatch({ type: 'addPlayedSong', payload: { id } });
   };
 
   const onPauseOrPlay = (status: any) => {
@@ -39,6 +46,7 @@ export function mapDispatchToProps(dispatch: any) {
     onSetUser,
     // 移除歌曲
     onRemoveSong,
+    onPlayedSong,
   };
 }
 
