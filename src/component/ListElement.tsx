@@ -160,7 +160,6 @@ const SelectItem = connect(
               onClick={async () => {
                 if (ref.current) {
                   const audio = ref.current;
-                  console.log(song);
                   const res = await audio.play();
                   setStatus(true);
                 }

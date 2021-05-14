@@ -46,7 +46,6 @@ const NeteaseLogin = connect(
       message.error(res.statusText);
       return;
     }
-    console.log(res, refresh, info.data);
     props.onSetUser(info.data);
   };
 
