@@ -1,13 +1,15 @@
+/* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { CSSProperties } from 'react';
-import { message } from 'antd';
-import { useDispatch, connect } from 'react-redux';
-import { DeleteOutlined } from '@ant-design/icons';
-import SongApi from '../util/songApi';
+import React, { useRef } from 'react';
+import { connect, useSelector } from 'react-redux';
+import {
+  DeleteOutlined,
+  PauseOutlined,
+  PlayCircleOutlined,
+} from '@ant-design/icons';
 import { Container } from './BasicHTMLElement';
 import { mapDispatchToProps, mapStateToProps } from '../store/dispatchBind';
-
-const { songUrl } = SongApi();
+import { StoreState } from '../store';
 
 const handleTime = (milliseconds: number) => {
   const time = milliseconds / 1000;
@@ -20,7 +22,7 @@ const handleTime = (milliseconds: number) => {
 };
 
 const SelectItem = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(
   (props: {
@@ -33,7 +35,16 @@ const SelectItem = connect(
     onPauseOrPlay: Function;
     onRemoveSong: Function;
   }) => {
-    const { isPlay, title, singer, id, spendTime } = props;
+    const { title, singer, id, spendTime } = props;
+    const iconStyle: React.CSSProperties = {
+      color: '#D0104C',
+      margin: 10,
+      fontSize: 24,
+      marginRight: 20,
+      flexGrow: 0,
+    };
+    const { song, isPlay } = useSelector((state: StoreState) => state);
+    const ref = useRef<HTMLAudioElement>(null);
 
     return (
       <Container
@@ -46,9 +57,10 @@ const SelectItem = connect(
           flexDirection: 'row',
           backgroundImage: 'linear-gradient(180deg, #ffe6e9, #ffb8c5)',
           margin: 25,
-          marginLeft: '3rem',
-          marginRight: '3rem',
+          marginLeft: '1rem',
+          marginRight: '1rem',
         }}
+        bodyStyle={{ width: '100%', position: 'relative', height: '100%' }}
       >
         <div
           style={{
@@ -64,27 +76,39 @@ const SelectItem = connect(
           <div className="text-baseRed font-normal text-sm">{singer}</div>
           <div className="m-2 text-baseRed">{handleTime(spendTime)}</div>
           <div style={{ flexGrow: 1 }} />
+          {isPlay ? (
+            <PauseOutlined
+              onClick={() => {
+                props.onPauseOrPlay(!isPlay);
+              }}
+              style={iconStyle}
+              className="transition duration-500 ease-in-out transform hover:scale-110"
+            />
+          ) : (
+            <PlayCircleOutlined
+              onClick={() => {
+                props.onPauseOrPlay(!isPlay);
+              }}
+              style={iconStyle}
+              className="transition duration-500 ease-in-out transform hover:scale-110"
+            />
+          )}
           <DeleteOutlined
             onClick={() => {
               props.onRemoveSong(id);
             }}
-            style={{
-              color: '#D0104C',
-              margin: 10,
-              fontSize: 24,
-              marginRight: 20,
-              flexGrow: 0,
-            }}
+            style={iconStyle}
             className="transition duration-500 ease-in-out transform hover:scale-110"
           />
         </div>
+        <audio src={song.url} ref={ref} />
       </Container>
     );
   }
 );
 
 const ListItem = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
 )(
   (props: {
@@ -97,7 +121,7 @@ const ListItem = connect(
     onPauseOrPlay: Function;
     onRemoveSong: Function;
   }) => {
-    const { isPlay, title, singer, id, spendTime } = props;
+    const { title, singer, id, spendTime } = props;
 
     return (
       <Container
@@ -109,8 +133,8 @@ const ListItem = connect(
           display: 'flex',
           flexDirection: 'row',
           marginTop: 25,
-          marginLeft: '3rem',
-          marginRight: '3rem',
+          marginLeft: '1rem',
+          marginRight: '1rem',
         }}
       >
         <div

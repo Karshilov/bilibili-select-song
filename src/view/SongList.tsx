@@ -34,7 +34,6 @@ const SongList = connect(
         .map((item) => {
           return item.id === song.id ? (
             <SelectItem
-              isPlay={isPlay}
               title={item.title}
               id={item.id}
               spendTime={item.spendTime}
@@ -43,7 +42,6 @@ const SongList = connect(
             />
           ) : (
             <ListItem
-              isPlay={isPlay}
               title={item.title}
               id={item.id}
               spendTime={item.spendTime}
