@@ -3,8 +3,6 @@
 import { message } from 'antd';
 import { stat } from 'fs';
 import { createStore } from 'redux';
-import { persistStore, persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage';
 import { UserInfoModel } from '../util/DataModel';
 import songApi from '../util/songApi';
 
@@ -65,8 +63,8 @@ const actions: Actions = {
     return state;
   },
   clearAll(state) {
-    state.song = initialState.song;
-    state.songs = initialState.songs;
+    state.song = undefined;
+    state.songs = [];
     state.isPlay = false;
     state.played = [];
     return state;
@@ -89,18 +87,9 @@ const reducer = (state: StoreState = initialState, action: Action) => {
   return initialState;
 };
 
-const persistedReducer = persistReducer(
-  {
-    key: 'karshilov-redux',
-    storage,
-  },
-  reducer
-);
+const store = createStore(reducer);
 
-const store = createStore(persistedReducer);
-const persistor = persistStore(store);
-
-export { store, persistor };
+export { store };
 
 type ActionFunc = (state: StoreState, payload?: any) => StoreState;
 

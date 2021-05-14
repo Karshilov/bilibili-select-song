@@ -37,6 +37,17 @@ export function mapDispatchToProps(dispatch: any) {
     else dispatch({ type: 'neteaseLogin', payload: status });
   };
 
+  const onClearAll = () => {
+    dispatch({ type: 'clearAll' });
+  };
+
+  const onAddSong = (payload: any) => {
+    dispatch({
+      type: 'addSong',
+      payload,
+    });
+  };
+
   return {
     // 当前播放歌曲
     onChangeSong,
@@ -47,6 +58,8 @@ export function mapDispatchToProps(dispatch: any) {
     // 移除歌曲
     onRemoveSong,
     onPlayedSong,
+    onClearAll,
+    onAddSong,
   };
 }
 

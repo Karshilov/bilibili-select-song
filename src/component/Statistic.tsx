@@ -1,15 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Row, Col, Typography } from 'antd';
-import { mapStateToProps } from '../store/dispatchBind';
+import { mapStateToProps, mapDispatchToProps } from '../store/dispatchBind';
 import '../view/statictis-font.global.css';
 
 const { Text, Paragraph } = Typography;
 
 const SongStatistic = connect(
   mapStateToProps,
-  null
+  mapDispatchToProps
 )((props: any) => {
+  console.log(props);
   const statisticsColumns = [
     {
       key: '总点歌数',

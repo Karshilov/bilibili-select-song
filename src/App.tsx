@@ -1,8 +1,6 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { PersistGate } from 'redux-persist/integration/react';
-import { store, persistor } from './store';
+import { store } from './store';
 import RootRouter from './router/index';
 import icon from '../assets/icon.svg';
 import AuthGuard from './component/AuthGuard';
@@ -47,11 +45,9 @@ const Hello = () => {
 
 const APP: React.FC = () => (
   <Provider store={store}>
-    <PersistGate persistor={persistor}>
-      <AuthGuard>
-        <RootRouter />
-      </AuthGuard>
-    </PersistGate>
+    <AuthGuard>
+      <RootRouter />
+    </AuthGuard>
   </Provider>
 );
 

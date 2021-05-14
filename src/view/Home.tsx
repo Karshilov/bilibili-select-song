@@ -56,6 +56,7 @@ const Home = connect(
       props.songs.length !== 0 &&
       props.songs.find((item: any) => item.id === firstMatch.id)
     ) {
+      console.log(props.songs);
       message.error('列表中已存在~');
       return;
     }
@@ -70,14 +71,11 @@ const Home = connect(
     if (props.song === undefined) {
       await props.onChangeSong(firstMatch.id);
     }
-    dispatch({
-      type: 'addSong',
-      payload: {
-        id: firstMatch.id,
-        singer: allSinger(),
-        title: firstS.name,
-        spendTime: firstS.dt,
-      },
+    props.onAddSong({
+      id: firstMatch.id,
+      singer: allSinger(),
+      title: firstS.name,
+      spendTime: firstS.dt,
     });
   };
 
@@ -218,7 +216,7 @@ const Home = connect(
             />
             <ClearOutlined
               onClick={() => {
-                dispatch({ type: 'clearAll' });
+                props.onClearAll();
               }}
               style={{
                 color: '#D0104C',
