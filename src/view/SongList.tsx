@@ -12,6 +12,7 @@ const SongList = connect(
   const [pageNums, setPageNums] = useState<Array<number>>([]);
 
   useEffect(() => {
+    console.log(song);
     let tot = songs.length;
     let i = 1;
     const newNums: Array<number> = [];
@@ -32,7 +33,6 @@ const SongList = connect(
               Math.min(pageAndPageSize[0] * pageAndPageSize[1], songs.length)
             )
             .map((item: any) => {
-              console.log(song.id === item.id, song.id, item.id);
               return item.id === song.id ? (
                 <SelectItem
                   title={item.title}

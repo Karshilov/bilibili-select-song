@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector, connect } from 'react-redux';
-import { Row, Col, Typography, message, Pagination } from 'antd';
-import { SelectItem, ListItem } from './ListElement';
-import { StoreState } from '../store';
+import React from 'react';
+import { connect } from 'react-redux';
+import { Row, Col, Typography } from 'antd';
 import { mapStateToProps } from '../store/dispatchBind';
 import '../view/statictis-font.global.css';
 
@@ -11,20 +9,23 @@ const { Text, Paragraph } = Typography;
 const SongStatistic = connect(
   mapStateToProps,
   null
-)(() => {
-  const { songs, played } = useSelector((state: StoreState) => state);
+)((props: any) => {
+  console.log(props);
   const statisticsColumns = [
     {
       key: '总点歌数',
-      num: songs.length,
+      num: props.songs.length,
     },
     {
       key: '已播放数',
-      num: played.length,
+      num: props.played.length,
     },
     {
       key: '未播放数',
-      num: songs.length - played.length >= 0 ? songs.length - played.length : 0,
+      num:
+        props.songs.length - props.played.length >= 0
+          ? props.songs.length - props.played.length
+          : 0,
     },
   ];
 

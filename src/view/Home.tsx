@@ -52,7 +52,10 @@ const Home = connect(
     const firstMatch = await songUrl(res.data.result.songs[0].id)
       .then((result: any) => result.data.data[0])
       .catch((err: any) => console.log(err));
-    if (props.songs.find((item: any) => item.id === firstMatch.id)) {
+    if (
+      props.songs.length !== 0 &&
+      props.songs.find((item: any) => item.id === firstMatch.id)
+    ) {
       message.error('列表中已存在~');
       return;
     }
@@ -64,7 +67,9 @@ const Home = connect(
       });
       return s.slice(0, s.length - 1);
     };
-    if (props.songs.length === 0) await props.onChangeSong(firstMatch.id);
+    if (props.song === undefined) {
+      await props.onChangeSong(firstMatch.id);
+    }
     dispatch({
       type: 'addSong',
       payload: {

@@ -57,5 +57,6 @@ export function mapStateToProps(state: any) {
     isPlay: state.isPlay,
     neteaseUser: state.neteaseUser,
     user: state.user,
+    played: state.played,
   };
 }
