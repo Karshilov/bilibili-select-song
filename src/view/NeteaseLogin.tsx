@@ -56,11 +56,6 @@ const NeteaseLogin = connect(
       message.error(res.statusText);
       return;
     }
-    const refresh = await loginRefresh();
-    if (refresh.status !== 200 && refresh.status !== 204) {
-      message.error(res.statusText);
-      return;
-    }
     props.onSetUser(false);
   };
 

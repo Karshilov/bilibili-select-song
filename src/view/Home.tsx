@@ -5,6 +5,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { KeepLiveWS } from 'bilibili-live-ws';
 import { LogoutOutlined, ClearOutlined, UserOutlined } from '@ant-design/icons';
+import { useHistory } from 'react-router-dom';
 import { message } from 'antd';
 import {
   Basement,
@@ -31,6 +32,7 @@ const Home = connect(
   mapDispatchToProps
 )((props: any) => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const { user, songs } = useSelector((state: StoreState) => state);
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
   const [isBrowsing, setIsBrowsing] = useState(false);
@@ -94,6 +96,11 @@ const Home = connect(
   }, []);
 
   useEffect(() => {
+    if (Number.isNaN(parseInt(user.roomId))) {
+      message.error('房间号应为数字');
+      dispatch({ type: 'logout' });
+      history.go(-1);
+    }
     const live = new KeepLiveWS(parseInt(user.roomId));
     live.on('open', () => {});
     live.on('live', () => {

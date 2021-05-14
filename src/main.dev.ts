@@ -130,3 +130,5 @@ app.on('activate', () => {
   // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) createWindow();
 });
+
+app.commandLine.appendSwitch('autoplay-policy', 'no-user-gesture-required');
