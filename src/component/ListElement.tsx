@@ -120,7 +120,7 @@ const SelectItem = connect(
             alignItems: 'baseline',
           }}
         >
-          <audio src={props.song.url} ref={ref} preload="auto" />
+          <audio src={props.song.url} ref={ref} autoPlay />
           <div className="text-baseRed font-medium text-lg">{title}</div>
           <div className="m-2 text-baseRed">-</div>
           <div className="text-baseRed font-normal text-sm">{singer}</div>
