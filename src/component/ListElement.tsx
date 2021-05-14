@@ -1,13 +1,18 @@
+/* eslint-disable consistent-return */
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-plusplus */
 /* eslint-disable jsx-a11y/media-has-caption */
 /* eslint-disable @typescript-eslint/ban-types */
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect, useSelector } from 'react-redux';
 import {
   DeleteOutlined,
   PauseOutlined,
   PlayCircleOutlined,
 } from '@ant-design/icons';
-import { Container } from './BasicHTMLElement';
+import { message } from 'antd';
+import { nextTick } from 'process';
+import { Container, Layer } from './BasicHTMLElement';
 import { mapDispatchToProps, mapStateToProps } from '../store/dispatchBind';
 import { StoreState } from '../store';
 
@@ -34,6 +39,8 @@ const SelectItem = connect(
     onChangeSong: Function;
     onPauseOrPlay: Function;
     onRemoveSong: Function;
+    songs: Array<any>;
+    song: any;
   }) => {
     const { title, singer, id, spendTime } = props;
     const iconStyle: React.CSSProperties = {
@@ -43,15 +50,58 @@ const SelectItem = connect(
       marginRight: 20,
       flexGrow: 0,
     };
-    const { song, isPlay } = useSelector((state: StoreState) => state);
     const ref = useRef<HTMLAudioElement>(null);
+    const [currentTime, setCurrentTime] = useState(0);
+    const [duration, setDuration] = useState(0);
+
+    const onStepSong = (
+      currentSongId: number | undefined = undefined,
+      next = true
+    ) => {
+      if (!currentSongId) {
+        // eslint-disable-next-line no-param-reassign
+        currentSongId = props.songs.findIndex(
+          (item) => item.id === props.song.id
+        );
+      }
+      const step = next ? 1 : -1;
+      const nextSong = props.songs[currentSongId + step];
+      if (!nextSong) return message.info('歌单已清空');
+      props
+        .onChangeSong(nextSong.id)
+        .then((res: any) => {
+          if (!res) onStepSong(currentSongId ? ++currentSongId : 0, next);
+          return true;
+        })
+        .catch((err: any) => {
+          message.error(err);
+        });
+    };
+
+    useEffect(() => {
+      const audio = ref.current;
+      if (audio) {
+        audio.onended = () => {
+          onStepSong();
+        };
+        audio.onpause = () => {
+          props.onPauseOrPlay(false);
+        };
+        audio.onplay = () => {
+          setDuration(audio.duration);
+          console.log(audio.duration, audio.currentTime, audio.src);
+          nextTick(() => {
+            props.onPauseOrPlay(true);
+          }, null);
+        };
+        audio.ontimeupdate = () => {
+          setCurrentTime(audio.currentTime);
+        };
+      }
+    }, []);
 
     return (
       <Container
-        onClick={async () => {
-          await props.onChangeSong(id);
-          props.onPauseOrPlay(true);
-        }}
         style={{
           display: 'flex',
           flexDirection: 'row',
@@ -76,10 +126,10 @@ const SelectItem = connect(
           <div className="text-baseRed font-normal text-sm">{singer}</div>
           <div className="m-2 text-baseRed">{handleTime(spendTime)}</div>
           <div style={{ flexGrow: 1 }} />
-          {isPlay ? (
+          {props.isPlay ? (
             <PauseOutlined
               onClick={() => {
-                props.onPauseOrPlay(!isPlay);
+                if (ref.current) ref.current.pause();
               }}
               style={iconStyle}
               className="transition duration-500 ease-in-out transform hover:scale-110"
@@ -87,7 +137,11 @@ const SelectItem = connect(
           ) : (
             <PlayCircleOutlined
               onClick={() => {
-                props.onPauseOrPlay(!isPlay);
+                if (ref.current) {
+                  const audio = ref.current;
+                  audio.play();
+                  audio.muted = false;
+                }
               }}
               style={iconStyle}
               className="transition duration-500 ease-in-out transform hover:scale-110"
@@ -101,7 +155,24 @@ const SelectItem = connect(
             className="transition duration-500 ease-in-out transform hover:scale-110"
           />
         </div>
-        <audio src={song.url} ref={ref} />
+        <audio src={props.song.url} ref={ref} muted />
+        <Layer
+          style={{
+            left: `${parseInt(
+              ((currentTime * 100) / duration).toString(),
+              10
+            )}%`,
+          }}
+        >
+          <div
+            style={{
+              height: '100%',
+              width: 2,
+              background: '#F8F2F8',
+              boxShadow: '6px 0px 4px #FFF',
+            }}
+          />
+        </Layer>
       </Container>
     );
   }
@@ -120,6 +191,8 @@ const ListItem = connect(
     onChangeSong: Function;
     onPauseOrPlay: Function;
     onRemoveSong: Function;
+    songs: Array<any>;
+    song: any;
   }) => {
     const { title, singer, id, spendTime } = props;
 
