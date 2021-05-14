@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { SelectItem, ListItem } from '../component/ListElement';
 import { StoreState } from '../store';
-import { mapStateToProps } from '../store/dispatchBind';
+import { mapStateToProps, mapDispatchToProps } from '../store/dispatchBind';
 
 const SongList = connect(
   mapStateToProps,
-  null
-)(() => {
+  mapDispatchToProps
+)((props: any) => {
   const { songs, song, isPlay } = useSelector((state: StoreState) => state);
   const [pageAndPageSize, setPageAndPageSize] = useState<Array<number>>([1, 4]);
   const [pageNums, setPageNums] = useState<Array<number>>([]);
@@ -26,30 +26,32 @@ const SongList = connect(
 
   return (
     <div className="p-2" style={{ marginLeft: '10%', marginRight: '10%' }}>
-      {songs
-        .slice(
-          (pageAndPageSize[0] - 1) * pageAndPageSize[1],
-          Math.min(pageAndPageSize[0] * pageAndPageSize[1], songs.length)
-        )
-        .map((item) => {
-          return item.id === song.id ? (
-            <SelectItem
-              title={item.title}
-              id={item.id}
-              spendTime={item.spendTime}
-              key={Math.random()}
-              singer={item.singer}
-            />
-          ) : (
-            <ListItem
-              title={item.title}
-              id={item.id}
-              spendTime={item.spendTime}
-              key={Math.random()}
-              singer={item.singer}
-            />
-          );
-        })}
+      {song !== undefined
+        ? songs
+            .slice(
+              (pageAndPageSize[0] - 1) * pageAndPageSize[1],
+              Math.min(pageAndPageSize[0] * pageAndPageSize[1], songs.length)
+            )
+            .map((item) => {
+              return item.id === song.id ? (
+                <SelectItem
+                  title={item.title}
+                  id={item.id}
+                  spendTime={item.spendTime}
+                  key={Math.random()}
+                  singer={item.singer}
+                />
+              ) : (
+                <ListItem
+                  title={item.title}
+                  id={item.id}
+                  spendTime={item.spendTime}
+                  key={Math.random()}
+                  singer={item.singer}
+                />
+              );
+            })
+        : null}
       <div
         style={{
           width: '100%',

@@ -13,7 +13,7 @@ export function mapDispatchToProps(dispatch: any) {
       message.warning('歌曲权限不足');
       return false;
     }
-    dispatch({ type: 'changeSong', payload: song });
+    dispatch({ type: 'changeSong', payload: { ...song, id } });
     return true;
   };
 

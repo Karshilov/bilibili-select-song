@@ -11,7 +11,7 @@ import {
   PlayCircleOutlined,
 } from '@ant-design/icons';
 import { message } from 'antd';
-import { nextTick } from 'process';
+import { configConsumerProps } from 'antd/lib/config-provider';
 import { Container, Layer } from './BasicHTMLElement';
 import { mapDispatchToProps, mapStateToProps } from '../store/dispatchBind';
 import { StoreState } from '../store';
@@ -90,11 +90,10 @@ const SelectItem = connect(
         audio.onplay = () => {
           setDuration(audio.duration);
           console.log(audio.duration, audio.currentTime, audio.src);
-          nextTick(() => {
-            props.onPauseOrPlay(true);
-          }, null);
+          props.onPauseOrPlay(true);
         };
         audio.ontimeupdate = () => {
+          console.log(currentTime);
           setCurrentTime(audio.currentTime);
         };
       }
@@ -121,6 +120,7 @@ const SelectItem = connect(
             alignItems: 'baseline',
           }}
         >
+          <audio src={props.song.url} ref={ref} preload="auto" />
           <div className="text-baseRed font-medium text-lg">{title}</div>
           <div className="m-2 text-baseRed">-</div>
           <div className="text-baseRed font-normal text-sm">{singer}</div>
@@ -129,18 +129,25 @@ const SelectItem = connect(
           {props.isPlay ? (
             <PauseOutlined
               onClick={() => {
-                if (ref.current) ref.current.pause();
+                if (ref.current) {
+                  ref.current.pause();
+                }
               }}
               style={iconStyle}
               className="transition duration-500 ease-in-out transform hover:scale-110"
             />
           ) : (
             <PlayCircleOutlined
-              onClick={() => {
+              onClick={async () => {
                 if (ref.current) {
                   const audio = ref.current;
-                  audio.play();
-                  audio.muted = false;
+                  console.log(props.song);
+                  const res = audio.play();
+                  if (res) {
+                    res.catch((err) => {
+                      audio.play();
+                    });
+                  }
                 }
               }}
               style={iconStyle}
@@ -155,7 +162,6 @@ const SelectItem = connect(
             className="transition duration-500 ease-in-out transform hover:scale-110"
           />
         </div>
-        <audio src={props.song.url} ref={ref} muted />
         <Layer
           style={{
             left: `${parseInt(

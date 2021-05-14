@@ -1,9 +1,14 @@
+/* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
+import { message } from 'antd';
 import { stat } from 'fs';
 import { createStore } from 'redux';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { UserInfoModel } from '../util/DataModel';
+import songApi from '../util/songApi';
+
+const { songUrl } = songApi();
 
 export interface StoreState {
   isLogin: boolean;
@@ -54,8 +59,6 @@ const actions: Actions = {
   },
   addSong(state, payload) {
     state.songs = state.songs.concat(payload);
-    // eslint-disable-next-line prefer-destructuring
-    if (state.song === undefined) state.song = state.songs[0];
     return state;
   },
   clearAll(state) {

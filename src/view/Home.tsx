@@ -18,7 +18,7 @@ import { DanmuModel } from '../util/DataModel';
 import { CommonDanmu, SelectDanmu } from '../component/DanmuElement';
 import { useApi } from '../util/api';
 import './statictis-font.global.css';
-import { mapStateToProps } from '../store/dispatchBind';
+import { mapStateToProps, mapDispatchToProps } from '../store/dispatchBind';
 import SongApi from '../util/songApi';
 import SongList from './SongList';
 import SongStatistic from '../component/Statistic';
@@ -28,8 +28,8 @@ const { songUrl } = SongApi();
 
 const Home = connect(
   mapStateToProps,
-  null
-)(() => {
+  mapDispatchToProps
+)((props: any) => {
   const dispatch = useDispatch();
   const { user, songs } = useSelector((state: StoreState) => state);
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
@@ -61,6 +61,7 @@ const Home = connect(
       });
       return s;
     };
+    if (songs.length === 0) await props.onChangeSong(firstMatch.id);
     dispatch({
       type: 'addSong',
       payload: {
