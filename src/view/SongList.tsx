@@ -21,6 +21,9 @@ const SongList = connect(
       i += 1;
     }
     setPageNums([...newNums]);
+    if (song === undefined && songs.length !== 0) {
+      props.onChangeSong(songs[0].id);
+    }
   }, [pageAndPageSize, songs]);
 
   return (

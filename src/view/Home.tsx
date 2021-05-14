@@ -56,7 +56,6 @@ const Home = connect(
       props.songs.length !== 0 &&
       props.songs.find((item: any) => item.id === firstMatch.id)
     ) {
-      console.log(props.songs);
       message.error('列表中已存在~');
       return;
     }
@@ -68,9 +67,6 @@ const Home = connect(
       });
       return s.slice(0, s.length - 1);
     };
-    if (props.song === undefined) {
-      await props.onChangeSong(firstMatch.id);
-    }
     props.onAddSong({
       id: firstMatch.id,
       singer: allSinger(),

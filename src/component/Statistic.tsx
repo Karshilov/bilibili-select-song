@@ -10,7 +10,6 @@ const SongStatistic = connect(
   mapStateToProps,
   mapDispatchToProps
 )((props: any) => {
-  console.log(props);
   const statisticsColumns = [
     {
       key: '总点歌数',
