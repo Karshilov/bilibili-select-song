@@ -17,7 +17,10 @@ const SongStatistic = connect(
     },
     {
       key: '已播放数',
-      num: props.played.length,
+      num:
+        props.played.length > props.songs.length
+          ? props.songs.length
+          : props.played.length,
     },
     {
       key: '未播放数',

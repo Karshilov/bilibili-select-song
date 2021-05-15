@@ -38,6 +38,7 @@ const SelectItem = connect(
     onPauseOrPlay: Function;
     onRemoveSong: Function;
     onPlayedSong: Function;
+    onWaiting: Function;
     songs: Array<any>;
     song: any;
   }) => {
@@ -69,7 +70,7 @@ const SelectItem = connect(
       const nextSong = props.songs[currentSongId + step];
       if (!nextSong) {
         message.info('歌单已清空');
-        props.onRemoveSong(id);
+        props.onWaiting();
         return;
       }
       props

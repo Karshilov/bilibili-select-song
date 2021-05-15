@@ -48,18 +48,19 @@ export function mapDispatchToProps(dispatch: any) {
     });
   };
 
+  const onWaiting = () => {
+    dispatch({ type: 'changeSong', payload: undefined });
+  };
+
   return {
-    // 当前播放歌曲
     onChangeSong,
-    // 播放或暂停
     onPauseOrPlay,
-    // 用户登录或注销
     onSetUser,
-    // 移除歌曲
     onRemoveSong,
     onPlayedSong,
     onClearAll,
     onAddSong,
+    onWaiting,
   };
 }
 

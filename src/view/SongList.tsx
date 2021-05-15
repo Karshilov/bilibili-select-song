@@ -7,7 +7,7 @@ const SongList = connect(
   mapStateToProps,
   mapDispatchToProps
 )((props: any) => {
-  const { songs, song } = props;
+  const { songs, song, played } = props;
   const [pageAndPageSize, setPageAndPageSize] = useState<Array<number>>([1, 4]);
   const [pageNums, setPageNums] = useState<Array<number>>([]);
 
@@ -21,39 +21,42 @@ const SongList = connect(
       i += 1;
     }
     setPageNums([...newNums]);
-    if (song === undefined && songs.length !== 0) {
+    if (
+      song === undefined &&
+      songs.length !== 0 &&
+      songs.length > played.length
+    ) {
       props.onChangeSong(songs[0].id);
     }
   }, [pageAndPageSize, songs]);
 
   return (
     <div className="p-2" style={{ marginLeft: '10%', marginRight: '10%' }}>
-      {song !== undefined
-        ? songs
-            .slice(
-              (pageAndPageSize[0] - 1) * pageAndPageSize[1],
-              Math.min(pageAndPageSize[0] * pageAndPageSize[1], songs.length)
-            )
-            .map((item: any) => {
-              return item.id === song.id ? (
-                <SelectItem
-                  title={item.title}
-                  id={item.id}
-                  spendTime={item.spendTime}
-                  key={item.id}
-                  singer={item.singer}
-                />
-              ) : (
-                <ListItem
-                  title={item.title}
-                  id={item.id}
-                  spendTime={item.spendTime}
-                  key={item.id}
-                  singer={item.singer}
-                />
-              );
-            })
-        : null}
+      {songs
+        .slice(
+          (pageAndPageSize[0] - 1) * pageAndPageSize[1],
+          Math.min(pageAndPageSize[0] * pageAndPageSize[1], songs.length)
+        )
+        .map((item: any) => {
+          const fg = song !== undefined && item.id === song.id;
+          return fg ? (
+            <SelectItem
+              title={item.title}
+              id={item.id}
+              spendTime={item.spendTime}
+              key={item.id}
+              singer={item.singer}
+            />
+          ) : (
+            <ListItem
+              title={item.title}
+              id={item.id}
+              spendTime={item.spendTime}
+              key={item.id}
+              singer={item.singer}
+            />
+          );
+        })}
       <div
         style={{
           width: '100%',
