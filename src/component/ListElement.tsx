@@ -69,7 +69,6 @@ const SelectItem = connect(
       const step = next ? 1 : -1;
       const nextSong = props.songs[currentSongId + step];
       if (!nextSong) {
-        message.info('歌单已清空');
         props.onWaiting();
         return;
       }
@@ -130,7 +129,7 @@ const SelectItem = connect(
             }}
           />
         </Layer>
-        <audio src={song.url} ref={ref} autoPlay />
+        <audio src={song === undefined ? '' : song.url} ref={ref} autoPlay />
         <div
           style={{
             display: 'flex',

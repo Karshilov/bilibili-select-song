@@ -1,7 +1,5 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
-import { message } from 'antd';
-import { stat } from 'fs';
 import { createStore } from 'redux';
 import { UserInfoModel } from '../util/DataModel';
 import songApi from '../util/songApi';
@@ -48,10 +46,12 @@ const actions: Actions = {
   },
   removeSong(state, payload) {
     state.songs = state.songs.filter((item) => item.id !== payload);
+    state.played = state.played.filter((item) => item !== payload);
     return state;
   },
   addPlayedSong(state, payload) {
-    state.played = state.played.concat(payload);
+    if (!state.played.find((item) => item === payload))
+      state.played = state.played.concat(payload);
     return state;
   },
   setIsPlay(state, payload) {
@@ -75,6 +75,10 @@ const actions: Actions = {
   },
   neteaseLogout(state) {
     state.neteaseUser = undefined;
+    return state;
+  },
+  refreshSongs(state) {
+    state.songs = [...state.songs];
     return state;
   },
 };

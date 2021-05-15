@@ -50,6 +50,7 @@ export function mapDispatchToProps(dispatch: any) {
 
   const onWaiting = () => {
     dispatch({ type: 'changeSong', payload: undefined });
+    // dispatch({ type: 'refreshSongs' });
   };
 
   return {
@@ -72,5 +73,6 @@ export function mapStateToProps(state: any) {
     neteaseUser: state.neteaseUser,
     user: state.user,
     played: state.played,
+    needNext: state.needNext,
   };
 }
