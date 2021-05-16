@@ -5,7 +5,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { KeepLiveWS } from 'bilibili-live-ws';
 import { LogoutOutlined, ClearOutlined, UserOutlined } from '@ant-design/icons';
-import { useHistory } from 'react-router-dom';
 import { message } from 'antd';
 import {
   Basement,
@@ -32,13 +31,19 @@ const Home = connect(
   mapDispatchToProps
 )((props: any) => {
   const dispatch = useDispatch();
-  const history = useHistory();
   const { user } = useSelector((state: StoreState) => state);
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
   const [isBrowsing, setIsBrowsing] = useState(false);
   const [showNetease, setShowNetease] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const api = useApi();
+
+  const iconCSS: React.CSSProperties = {
+    color: '#D0104C',
+    margin: 10,
+    fontSize: 24,
+    marginRight: 20,
+  };
 
   const addSongIdBySearch = async (keywords: string) => {
     const res = await api.get('/cloudsearch', {
@@ -202,36 +207,21 @@ const Home = connect(
               onClick={() => {
                 dispatch({ type: 'logout' });
               }}
-              style={{
-                color: '#D0104C',
-                margin: 10,
-                fontSize: 24,
-                marginRight: 20,
-              }}
+              style={iconCSS}
               className="transition duration-500 ease-in-out transform hover:scale-110"
             />
             <ClearOutlined
               onClick={() => {
                 props.onClearAll();
               }}
-              style={{
-                color: '#D0104C',
-                margin: 10,
-                fontSize: 24,
-                marginRight: 20,
-              }}
+              style={iconCSS}
               className="transition duration-500 ease-in-out transform hover:scale-110"
             />
             <UserOutlined
               onClick={() => {
                 setShowNetease(!showNetease);
               }}
-              style={{
-                color: '#D0104C',
-                margin: 10,
-                fontSize: 24,
-                marginRight: 20,
-              }}
+              style={iconCSS}
               className="transition duration-500 ease-in-out transform hover:scale-110"
             />
           </div>

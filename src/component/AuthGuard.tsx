@@ -2,7 +2,6 @@
 /* eslint-disable react/require-default-props */
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
 import { StoreState } from '../store';
 import Login from '../view/Login';
 
@@ -12,7 +11,6 @@ interface Props {
 
 const AuthGuard: React.FC<Props> = ({ children }: Props) => {
   const dispatch = useDispatch();
-  const history = useHistory();
 
   useEffect(() => {
     dispatch({ type: 'clearAll' });

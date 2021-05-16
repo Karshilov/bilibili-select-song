@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-plusplus */
-import { message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { SelectItem, ListItem } from '../component/ListElement';
@@ -10,7 +9,7 @@ const SongList = connect(
   mapStateToProps,
   mapDispatchToProps
 )((props: any) => {
-  const { songs, song, played, needNext } = props;
+  const { songs, song, played } = props;
   const [pageAndPageSize, setPageAndPageSize] = useState<Array<number>>([1, 4]);
   const [pageNums, setPageNums] = useState<Array<number>>([]);
 

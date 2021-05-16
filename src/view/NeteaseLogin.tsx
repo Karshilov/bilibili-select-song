@@ -1,12 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector, connect } from 'react-redux';
-import { message, Input, Button } from 'antd';
-import {
-  Basement,
-  Layer,
-  Board,
-  Container,
-} from '../component/BasicHTMLElement';
+import React, { useState } from 'react';
+import { useSelector, connect } from 'react-redux';
+import { message } from 'antd';
+import { Container } from '../component/BasicHTMLElement';
 import NeteaseAvatar from '../../assets/netease-cloud-music-fill.svg';
 import { mapStateToProps, mapDispatchToProps } from '../store/dispatchBind';
 import { StoreState } from '../store';

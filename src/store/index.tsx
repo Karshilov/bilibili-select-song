@@ -2,9 +2,6 @@
 /* eslint-disable no-param-reassign */
 import { createStore } from 'redux';
 import { UserInfoModel } from '../util/DataModel';
-import songApi from '../util/songApi';
-
-const { songUrl } = songApi();
 
 export interface StoreState {
   isLogin: boolean;
