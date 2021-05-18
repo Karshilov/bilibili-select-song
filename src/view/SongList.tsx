@@ -9,7 +9,7 @@ const SongList = connect(
   mapStateToProps,
   mapDispatchToProps
 )((props: any) => {
-  const { songs, song, played, neteaseUser } = props;
+  const { songs, song, played } = props;
   const [pageAndPageSize, setPageAndPageSize] = useState<Array<number>>([1, 4]);
   const [pageNums, setPageNums] = useState<Array<number>>([]);
 
