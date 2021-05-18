@@ -10,7 +10,7 @@ const SongList = connect(
   mapStateToProps,
   mapDispatchToProps
 )((props: any) => {
-  const { songs, song, played, needNext } = props;
+  const { songs, song, played, needNext, neteaseUser } = props;
   const [pageAndPageSize, setPageAndPageSize] = useState<Array<number>>([1, 4]);
   const [pageNums, setPageNums] = useState<Array<number>>([]);
 
@@ -29,7 +29,7 @@ const SongList = connect(
       songs.length !== 0 &&
       songs.length > played.length
     ) {
-      props.onChangeSong(songs[songs.length - 1].id);
+      props.onChangeSong(songs[played.length].id);
     }
   }, [pageAndPageSize, songs]);
 

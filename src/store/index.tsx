@@ -1,5 +1,6 @@
 /* eslint-disable prefer-destructuring */
 /* eslint-disable no-param-reassign */
+import { stat } from 'fs';
 import { createStore } from 'redux';
 import { UserInfoModel } from '../util/DataModel';
 import songApi from '../util/songApi';
@@ -9,7 +10,7 @@ const { songUrl } = songApi();
 export interface StoreState {
   isLogin: boolean;
   user: UserInfoModel;
-  song: any;
+  song?: any;
   songs: Array<any>;
   isPlay: boolean;
   neteaseUser: any;
@@ -59,7 +60,22 @@ const actions: Actions = {
     return state;
   },
   addSong(state, payload) {
-    state.songs = state.songs.concat(payload);
+    if (
+      payload.byOrder !== true ||
+      (payload.byOrder === true && state.song === undefined)
+    ) {
+      state.songs = state.songs.concat(payload);
+    } else {
+      let curId = state.songs.findIndex((item) => item.id === state.song.id);
+      for (let i = curId; i < state.songs.length; i += 1) {
+        if (state.songs[i].byOrder === true) curId = i;
+      }
+      state.songs = [
+        ...state.songs.slice(0, curId + 1),
+        payload,
+        ...state.songs.slice(curId + 1, state.songs.length),
+      ];
+    }
     return state;
   },
   clearAll(state) {

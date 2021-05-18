@@ -20,6 +20,12 @@ const SongApi = () => {
 
   const loginRefresh = () => api.post('/login/refresh');
 
+  const userPlaylist = (uid: string) =>
+    api.get('/user/playlist', { params: { uid } });
+
+  const playlistDetail = (id: string) =>
+    api.get('/playlist/detail', { params: { id } });
+
   return {
     songUrl,
     songDetail,
@@ -29,6 +35,8 @@ const SongApi = () => {
     checkLogin,
     userAccount,
     loginRefresh,
+    userPlaylist,
+    playlistDetail,
   };
 };
 

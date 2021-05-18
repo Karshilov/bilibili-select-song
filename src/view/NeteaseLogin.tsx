@@ -13,7 +13,15 @@ import { StoreState } from '../store';
 import SongApi from '../util/songApi';
 import './statictis-font.global.css';
 
-const { userLogin, userAccount, loginRefresh, userLogout } = SongApi();
+const {
+  userLogin,
+  userAccount,
+  loginRefresh,
+  userLogout,
+  songUrl,
+  playlistDetail,
+  userPlaylist,
+} = SongApi();
 
 const NeteaseLogin = connect(
   mapStateToProps,
@@ -22,7 +30,7 @@ const NeteaseLogin = connect(
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
 
-  const { neteaseUser } = useSelector((state: StoreState) => state);
+  const { neteaseUser } = props;
 
   const bothMiddle: React.CSSProperties = {
     display: 'flex',
@@ -32,18 +40,18 @@ const NeteaseLogin = connect(
 
   const login = async () => {
     const res = await userLogin(phone, password);
-    if (res.status !== 200 && res.status !== 204) {
-      message.error(res.statusText);
+    if (res.data.code !== 200) {
+      message.error(res.data.message);
       return;
     }
     const refresh = await loginRefresh();
-    if (refresh.status !== 200 && refresh.status !== 204) {
-      message.error(res.statusText);
+    if (refresh.data.code !== 200) {
+      message.error(res.data.message);
       return;
     }
     const info = await userAccount();
-    if (info.status !== 200 && info.status !== 204) {
-      message.error(res.statusText);
+    if (info.data.code !== 200) {
+      message.error(res.data.message);
       return;
     }
     props.onSetUser(info.data);
