@@ -4,7 +4,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector, connect } from 'react-redux';
 import { KeepLiveWS } from 'bilibili-live-ws';
-import { LogoutOutlined, ClearOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  LogoutOutlined,
+  ClearOutlined,
+  UserOutlined,
+  LockOutlined,
+  UnlockOutlined,
+} from '@ant-design/icons';
 import { message } from 'antd';
 import {
   Basement,
@@ -35,6 +41,7 @@ const Home = connect(
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
   const [isBrowsing, setIsBrowsing] = useState(false);
   const [showNetease, setShowNetease] = useState(false);
+  const [fansOnly, setFansOnly] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const api = useApi();
 
@@ -224,6 +231,23 @@ const Home = connect(
               style={iconCSS}
               className="transition duration-500 ease-in-out transform hover:scale-110"
             />
+            {fansOnly ? (
+              <UnlockOutlined
+                onClick={() => {
+                  setFansOnly(false);
+                }}
+                style={iconCSS}
+                className="transition duration-500 ease-in-out transform hover:scale-110"
+              />
+            ) : (
+              <LockOutlined
+                onClick={() => {
+                  setFansOnly(true);
+                }}
+                style={iconCSS}
+                className="transition duration-500 ease-in-out transform hover:scale-110"
+              />
+            )}
           </div>
           {showNetease ? (
             <NeteaseLogin />
