@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /* eslint-disable radix */
 /* eslint-disable no-plusplus */
 /* eslint-disable no-case-declarations */
@@ -10,7 +11,9 @@ import {
   UserOutlined,
   LockOutlined,
   UnlockOutlined,
+  SyncOutlined,
 } from '@ant-design/icons';
+import { useHistory } from 'react-router-dom';
 import { message } from 'antd';
 import {
   Basement,
@@ -30,7 +33,7 @@ import SongList from './SongList';
 import SongStatistic from '../component/Statistic';
 import NeteaseLogin from './NeteaseLogin';
 
-const { songUrl } = SongApi();
+const { songUrl, userPlaylist, playlistDetail } = SongApi();
 
 const Home = connect(
   mapStateToProps,
@@ -42,6 +45,7 @@ const Home = connect(
   const [isBrowsing, setIsBrowsing] = useState(false);
   const [showNetease, setShowNetease] = useState(false);
   const [fansOnly, setFansOnly] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const api = useApi();
 
@@ -84,7 +88,59 @@ const Home = connect(
       singer: allSinger(),
       title: firstS.name,
       spendTime: firstS.dt,
+      byOrder: true,
     });
+  };
+
+  const loadDefaultPlaylist = async (curUser: any) => {
+    setIsLoading(true);
+    const playlist = await userPlaylist(curUser.account.id);
+    if (playlist.data.code !== 200) {
+      message.error(playlist.data.message);
+      return;
+    }
+    playlist.data.playlist.forEach(async (item: any) => {
+      if (item.name === 'bilibili点歌自用') {
+        const detail = await playlistDetail(item.id);
+        if (detail.data.code !== 200) {
+          message.error(detail.data.message);
+          return;
+        }
+        const allSinger = (cur: any) => {
+          let s = '';
+          cur.ar.forEach((singer: any) => {
+            s += singer.name;
+            s += '/';
+          });
+          return s.slice(0, s.length - 1);
+        };
+        const list: Array<any> = detail.data.playlist.tracks;
+
+        const dfsToAddSongs = async (idx: number) => {
+          if (idx >= list.length) return;
+          const cur = list[idx];
+          const realUrl = await songUrl(cur.id)
+            .then((result: any) => result.data.data[0])
+            .catch((err: any) => console.log(err));
+          if (
+            props.songs.length !== 0 &&
+            props.songs.find((val: any) => realUrl.id === val.id)
+          ) {
+            return;
+          }
+          props.onAddSong({
+            id: realUrl.id,
+            singer: allSinger(cur),
+            title: cur.name,
+            spendTime: cur.dt,
+            byOrder: false,
+          });
+          await dfsToAddSongs(idx + 1);
+        };
+        await dfsToAddSongs(0);
+      }
+    });
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -248,6 +304,18 @@ const Home = connect(
                 className="transition duration-500 ease-in-out transform hover:scale-110"
               />
             )}
+            <SyncOutlined
+              spin={isLoading}
+              onClick={() => {
+                if (props.neteaseUser !== undefined)
+                  loadDefaultPlaylist(props.neteaseUser);
+                else {
+                  message.error('请先登录网易云音乐');
+                }
+              }}
+              style={iconCSS}
+              className="transition duration-500 ease-in-out transform hover:scale-110"
+            />
           </div>
           {showNetease ? (
             <NeteaseLogin />
