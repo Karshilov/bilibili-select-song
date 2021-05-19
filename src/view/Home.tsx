@@ -13,7 +13,6 @@ import {
   UnlockOutlined,
   SyncOutlined,
 } from '@ant-design/icons';
-import { useHistory } from 'react-router-dom';
 import { message } from 'antd';
 import {
   Basement,
@@ -44,7 +43,7 @@ const Home = connect(
   const [danmuList, setDanmuList] = useState<Array<DanmuModel>>([]);
   const [isBrowsing, setIsBrowsing] = useState(false);
   const [showNetease, setShowNetease] = useState(false);
-  const [fansOnly, setFansOnly] = useState(false);
+  const { fansOnly } = props;
   const [isLoading, setIsLoading] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const api = useApi();
@@ -172,6 +171,7 @@ const Home = connect(
     });
     live.on('msg', (data) => {
       if (data.cmd === 'DANMU_MSG') {
+        console.log(data);
         setDanmuList((list) => {
           const newList = list.concat({
             auther: data.info[2][1],
@@ -184,7 +184,12 @@ const Home = connect(
         });
         const isSelect = /点歌\s.*/;
         if (isSelect.test(data.info[1]) === true && data.info[1].length > 3) {
-          addSongIdBySearch(data.info[1].slice(3));
+          if (!fansOnly) addSongIdBySearch(data.info[1].slice(3));
+          else if (
+            data.info[3][3].toString() === props.user.roomId &&
+            data.info[3][0] >= 1
+          )
+            addSongIdBySearch(data.info[1].slice(3));
         }
         if (ref.current) {
           if (isBrowsing === false) {
@@ -290,7 +295,7 @@ const Home = connect(
             {fansOnly ? (
               <UnlockOutlined
                 onClick={() => {
-                  setFansOnly(false);
+                  props.onSetFansOnly();
                 }}
                 style={iconCSS}
                 className="transition duration-500 ease-in-out transform hover:scale-110"
@@ -298,7 +303,7 @@ const Home = connect(
             ) : (
               <LockOutlined
                 onClick={() => {
-                  setFansOnly(true);
+                  props.onSetFansOnly();
                 }}
                 style={iconCSS}
                 className="transition duration-500 ease-in-out transform hover:scale-110"

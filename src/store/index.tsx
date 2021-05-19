@@ -12,6 +12,7 @@ export interface StoreState {
   isPlay: boolean;
   neteaseUser: any;
   played: Array<any>;
+  fansOnly: boolean;
 }
 
 const initialState: StoreState = {
@@ -22,6 +23,7 @@ const initialState: StoreState = {
   played: [],
   isPlay: false,
   neteaseUser: undefined,
+  fansOnly: false,
 };
 
 const actions: Actions = {
@@ -92,6 +94,10 @@ const actions: Actions = {
   },
   refreshSongs(state) {
     state.songs = [...state.songs];
+    return state;
+  },
+  setFansOnly(state) {
+    state.fansOnly = !state.fansOnly;
     return state;
   },
 };

@@ -53,6 +53,10 @@ export function mapDispatchToProps(dispatch: any) {
     // dispatch({ type: 'refreshSongs' });
   };
 
+  const onSetFansOnly = () => {
+    dispatch({ type: 'setFansOnly' });
+  };
+
   return {
     onChangeSong,
     onPauseOrPlay,
@@ -62,6 +66,7 @@ export function mapDispatchToProps(dispatch: any) {
     onClearAll,
     onAddSong,
     onWaiting,
+    onSetFansOnly,
   };
 }
 
@@ -73,6 +78,6 @@ export function mapStateToProps(state: any) {
     neteaseUser: state.neteaseUser,
     user: state.user,
     played: state.played,
-    needNext: state.needNext,
+    fansOnly: state.fansOnly,
   };
 }
