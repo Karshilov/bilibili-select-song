@@ -1,7 +1,7 @@
 {
   "name": "bilibili-select-song",
   "productName": "bilibili-select-song",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "./main.prod.js",
   "scripts": {
     "electron-rebuild": "node -r ../.erb/scripts/BabelRegister.js ../.erb/scripts/ElectronRebuild.js",
