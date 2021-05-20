@@ -32,6 +32,23 @@ const SongList = connect(
     }
   }, [pageAndPageSize, songs]);
 
+  useEffect(() => {
+    if (song !== undefined) {
+      const curId = songs.findIndex((item: any) => item.id === song.id);
+      if (
+        song !== undefined &&
+        curId !== -1 &&
+        Math.floor(curId / pageAndPageSize[1]) + 1 !== pageAndPageSize[0]
+      ) {
+        console.log(curId, pageAndPageSize);
+        setPageAndPageSize([
+          Math.floor(curId / pageAndPageSize[1]) + 1,
+          pageAndPageSize[1],
+        ]);
+      }
+    }
+  }, [song, songs]);
+
   return (
     <div className="p-2" style={{ marginLeft: '10%', marginRight: '10%' }}>
       {songs
@@ -77,7 +94,11 @@ const SongList = connect(
                   key={i}
                   style={{ fontSize: 17, margin: 5 }}
                   type="button"
-                  className="bg-transparent hover:bg-baseRed font-semibold text-baseRed hover:text-white px-2 py-1 hover:border-transparent"
+                  className={
+                    i === pageAndPageSize[0]
+                      ? 'bg-baseRed font-semibold text-white px-2 py-1 border-transparent'
+                      : 'bg-transparent hover:bg-baseRed font-semibold text-baseRed hover:text-white px-2 py-1 hover:border-transparent'
+                  }
                   onClick={() => {
                     setPageAndPageSize([i, pageAndPageSize[1]]);
                   }}
